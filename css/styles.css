@@ -178,7 +178,7 @@ nav h1 a {
   display: block;
   margin: 0;
   max-width: 100%;
-  min-height: 248px;
+  /* min-height: 248px; */
   min-width: 100%;
 }
 
@@ -316,4 +316,21 @@ nav h1 a {
 
 #restaurant-hours td {
   color: #666;
+}
+
+/* ====================== Break Points ====================== */
+
+@media screen and (max-width: 425px) {
+  .filter-options h2 {
+    display: none;
+  }
+  #map {
+    height: 300px;
+  }
+  #restaurants-list li {
+    padding: 0;
+  }
+  #restaurants-list {
+    padding: 0px 15px 0px;
+  }
 }
