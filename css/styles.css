@@ -334,6 +334,16 @@ nav h1 a {
   #restaurants-list {
     padding: 0px 15px 0px;
   }
+}
+
+@media screen and (max-width: 396px) {
+  /* ======== restaurant.html ========*/
+  .inside #map-container {
+    top: 110px;
+  }
+}
+
+@media screen and (max-width: 1100px) {
   /* ======== restaurant.html ========*/
   .inside #map-container {
     z-index: 5;
@@ -361,9 +371,23 @@ nav h1 a {
   }
 }
 
-@media screen and (max-width: 396px) {
+@media screen and (min-width: 473px) {
   /* ======== restaurant.html ========*/
-  .inside #map-container {
-    top: 110px;
+  .inside #footer {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  #breadcrumb {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 426px) {
+  #restaurant-address {
+    text-align: center;
+  }
+  #restaurant-hours {
+    margin: auto;
   }
 }
