@@ -321,6 +321,7 @@ nav h1 a {
 /* ====================== Break Points ====================== */
 
 @media screen and (max-width: 425px) {
+  /* ======== index.html ========*/
   .filter-options h2 {
     display: none;
   }
@@ -332,5 +333,37 @@ nav h1 a {
   }
   #restaurants-list {
     padding: 0px 15px 0px;
+  }
+  /* ======== restaurant.html ========*/
+  .inside #map-container {
+    z-index: 5;
+    height: 300px;
+    width: 100%;
+  }
+  #breadcrumb {
+    width: 100%;
+  }
+  #restaurant-container {
+    padding: 400px 40px 30px;
+    width: auto;
+  }
+  #reviews-container {
+    width: auto;
+  }
+  .inside #footer {
+    width: auto;
+  }
+  #restaurant-img {
+    margin-left: calc(10%/2);
+  }
+  #restaurant-cuisine {
+    margin-left: calc(10%/2);
+  }
+}
+
+@media screen and (max-width: 396px) {
+  /* ======== restaurant.html ========*/
+  .inside #map-container {
+    top: 110px;
   }
 }
