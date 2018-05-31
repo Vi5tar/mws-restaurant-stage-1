@@ -384,10 +384,22 @@ nav h1 a {
 }
 
 @media screen and (min-width: 426px) {
+  /* ======== restaurant.html ========*/
   #restaurant-address {
     text-align: center;
   }
   #restaurant-hours {
     margin: auto;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  #container {
+    width: 1000px;
+    background-color: #f3f3f3;
+    margin: auto;
+  }
+  body {
+    background-color: #f3f3f3;
   }
 }
