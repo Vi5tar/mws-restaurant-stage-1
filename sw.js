@@ -25,6 +25,8 @@ self.addEventListener('install', event => {
   }))
 })
 
+//The following snippet to go to the cache first
+//was taken from https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent
 self.addEventListener('fetch', event => {
   // Let the browser do its default thing
   // for non-GET requests.
