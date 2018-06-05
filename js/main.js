@@ -12,6 +12,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchCuisines();
 });
 
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register('/sw.js').then(function() {
+    console.log('SW Resgistered!');
+  }).catch(function() {
+    console.log('SW Fail');
+  });
+}
+
 /**
  * Fetch all neighborhoods and set their HTML.
  */
