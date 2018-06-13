@@ -1,6 +1,10 @@
 @charset "utf-8";
 /* CSS Document */
 
+html {
+  height: 100%;
+}
+
 body, td, th, p {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 10pt;
@@ -12,6 +16,7 @@ body {
   background-color: #fdfdfd;
   margin: 0;
   position: relative;
+  min-height: 100%;
 }
 
 ul, li {
@@ -57,6 +62,9 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   padding: 25px;
   text-align: center;
   text-transform: uppercase;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 /* ====================== Navigation ====================== */
@@ -339,7 +347,56 @@ nav h1 a {
     padding: 0;
   }
   #restaurants-list {
-    padding: 0px 15px 0px;
+    padding: 0px 15px 70px;
+  }
+}
+
+@media screen and (min-width: 1100px) {
+  /* ======== index.html ========*/
+  /*#container {
+    width: 1000px;
+    background-color: #f3f3f3;
+    margin: auto;
+  }
+  body {
+    background-color: #f3f3f3;
+  }*/
+  html {
+    height: 100%;
+  }
+  body {
+    min-height: 100%;
+  }
+  #map-container {
+    background: blue none repeat scroll 0 0;
+    height: 87%;
+    position: fixed;
+    right: 0;
+    top: 85px;
+    width: 50%;
+  }
+  #restaurants-list {
+    width: 50%;
+    padding-top: 85px;
+    padding-left: 0px;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  .filter-options {
+    position: fixed;
+    top: 30px;
+  }
+  #map {
+    height: 100%;
+  }
+  #footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 }
 
@@ -397,16 +454,5 @@ nav h1 a {
   }
   #restaurant-hours {
     margin: auto;
-  }
-}
-
-@media screen and (min-width: 1000px) {
-  #container {
-    width: 1000px;
-    background-color: #f3f3f3;
-    margin: auto;
-  }
-  body {
-    background-color: #f3f3f3;
   }
 }
