@@ -47,6 +47,8 @@ self.addEventListener('fetch', event => {
     }
 
     // If we didn't find a match in the cache, use the network.
+    // Also add it to the cache.
+    event.waitUntil(cache.add(event.request));
     return fetch(event.request);
   }());
 });
