@@ -25,6 +25,12 @@ self.addEventListener('install', event => {
   }))
 })
 
+// Take control of the page as soon as the SW activates.
+self.addEventListener('activate', event => {
+  clients.claim();
+  console.log("handling fetch events");
+})
+
 //The following snippet to go to the cache first
 //was taken from https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent
 self.addEventListener('fetch', event => {
