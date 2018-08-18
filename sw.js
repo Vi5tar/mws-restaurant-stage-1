@@ -50,7 +50,9 @@ self.addEventListener('fetch', event => {
       // If we found a match in the cache, return it, but also
       // update the entry in the cache in the background.
       fetch(event.request).then(response => {
-        cache.put(event.request.url, response);
+        if (response.type != "opaque") {
+          cache.put(event.request.url, response);
+        }  
       });
       return cachedResponse;
     }
@@ -58,7 +60,9 @@ self.addEventListener('fetch', event => {
     // If we didn't find a match in the cache, use the network.
     // Also add it to the cache.
     return fetch(event.request).then(response => {
-      cache.put(event.request.url, response.clone());
+      if (response.type != "opaque") {
+        cache.put(event.request.url, response.clone());
+      }
       return response;
     });
   }());
