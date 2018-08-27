@@ -27,12 +27,28 @@ gulp.task('copy-images', () => {
     .pipe(gulp.dest('dist/img'))
 })
 
-//watches files for changes
-gulp.task('watch', () => {
-  return gulp.watch('/*.html', ['copy-html'])
+//moves sw assets to dist folder
+gulp.task('copy-sw', () => {
+  return gulp.src(['./sw.js', './manifest.json'])
+    .pipe(gulp.dest('./dist'))
 })
 
-//concat and minify js
+//watches files for changes
+gulp.task('watch', () => {
+  gulp.watch('./*.html', gulp.parallel('copy-html'))
+  gulp.watch(['./sw.js', './manifest.json'], gulp.parallel('copy-sw'))
+  gulp.watch('css/**/*.css', gulp.parallel('css'))
+  gulp.watch('js/**/*.js', gulp.parallel('scripts'))
+})
+
+//concat js
+gulp.task('scripts', () => {
+  return gulp.src('js/**/*.js')
+    .pipe(concat('all.js'))
+    .pipe(gulp.dest('dist/js'))
+})
+
+//concat and minify js for production build
 gulp.task('scripts-dist', () => {
   return gulp.src('js/**/*.js')
     .pipe(concat('all.js'))
@@ -48,4 +64,4 @@ gulp.task('css', () => {
 })
 
 //default tasks
-gulp.task('default', gulp.parallel('copy-html', 'copy-images', ))
+gulp.task('default', gulp.series('copy-html', 'copy-images', 'copy-sw', 'scripts', 'css', 'watch' ))
