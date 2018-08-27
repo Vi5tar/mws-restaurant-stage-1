@@ -38,20 +38,35 @@ gulp.task('watch', () => {
   gulp.watch('./*.html', gulp.parallel('copy-html'))
   gulp.watch(['./sw.js', './manifest.json'], gulp.parallel('copy-sw'))
   gulp.watch('css/**/*.css', gulp.parallel('css'))
-  gulp.watch('js/**/*.js', gulp.parallel('scripts'))
+  gulp.watch('js/**/*.js', gulp.series('scripts', 'scripts-restaurant'))
 })
 
-//concat js
+//concat index js
 gulp.task('scripts', () => {
-  return gulp.src('js/**/*.js')
-    .pipe(concat('all.js'))
+  return gulp.src(['js/main.js', 'js/dbhelper.js'])
+    .pipe(concat('all1.js'))
     .pipe(gulp.dest('dist/js'))
 })
 
-//concat and minify js for production build
+//concat restaurant js
+gulp.task('scripts-restaurant', () => {
+  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
+    .pipe(concat('all2.js'))
+    .pipe(gulp.dest('dist/js'))
+})
+
+//concat and minify index js for production build
 gulp.task('scripts-dist', () => {
-  return gulp.src('js/**/*.js')
-    .pipe(concat('all.js'))
+  return gulp.src(['js/main.js', 'js/dbhelper.js'])
+    .pipe(concat('all1.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/js'))
+})
+
+//concat and minify restaurant js
+gulp.task('scripts-restaurant', () => {
+  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
+    .pipe(concat('all2.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist/js'))
 })
@@ -64,4 +79,4 @@ gulp.task('css', () => {
 })
 
 //default tasks
-gulp.task('default', gulp.series('copy-html', 'copy-images', 'copy-sw', 'scripts', 'css', 'watch' ))
+gulp.task('default', gulp.series('copy-html', 'copy-images', 'copy-sw', 'scripts', 'scripts-restaurant', 'css', 'watch' ))
