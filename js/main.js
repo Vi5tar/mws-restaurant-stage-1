@@ -21,6 +21,33 @@ if (navigator.serviceWorker) {
   });
 }
 
+lazyLoad = () => {
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0
+  }
+
+  let callback = function(entries, observer) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        let lazyImage = entry.target;
+        lazyImage.src = lazyImage.dataset.src;
+        lazyImage.classList.remove("lazyimg");
+        observer.unobserve(lazyImage);
+      }
+    });
+  };
+
+  let observer = new IntersectionObserver(callback, options);
+  let targets = document.querySelectorAll('#lazyimg');
+  console.log(targets);
+
+  targets.forEach(lazyImage => {
+    observer.observe(lazyImage);
+  })
+}
+
 /**
  * Fetch all neighborhoods and set their HTML.
  */
@@ -159,6 +186,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
     ul.append(createRestaurantHTML(restaurant));
   });
   addMarkersToMap();
+  lazyLoad();
 }
 
 /**
@@ -167,8 +195,12 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   const image = document.createElement('img');
+  const dataSrc = document.createAttribute('data-src')
   image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.id = 'lazyimg';
+  image.src = DBHelper.imageUrlForRestaurant(restaurant) + '-blurry.jpg';
+  dataSrc.value = DBHelper.imageUrlForRestaurant(restaurant) + '.jpg';
+  image.setAttributeNode(dataSrc);
   image.alt = restaurant.name + ' located at ' + restaurant.address;
   image.setAttribute('tabindex', 0);
   li.append(image);

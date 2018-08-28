@@ -5,14 +5,22 @@ let concat = require('gulp-concat')
 let uglify = require('gulp-uglify-es').default
 let cleanCSS = require('gulp-clean-css')
 
-//reduces image quality to lowest quality
-gulp.task('gulp-image-resize', () => {
-  return gulp.src('images/*.jpg')
+//creates a blurry version of jpgs.
+gulp.task('blur-image', () => {
+  return gulp.src('img/*.jpg')
     .pipe(imageResize({
+      width: 50,
       quality: 0
     }))
-    .pipe(rename((path) => { path.basename += '-low-quality' }))
-    .pipe(gulp.dest('dist/images'))
+    .pipe(imageResize( {
+      width: 800,
+      height: 600,
+      quality: 0,
+      upscale: true,
+      crop: true
+    }))
+    .pipe(rename((path) => { path.basename += '-blurry' }))
+    .pipe(gulp.dest('dist/img'))
 })
 
 //moves html files to dist folder
@@ -64,7 +72,7 @@ gulp.task('scripts-dist', () => {
 })
 
 //concat and minify restaurant js
-gulp.task('scripts-restaurant', () => {
+gulp.task('scripts-restaurant-dist', () => {
   return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
     .pipe(concat('all2.js'))
     .pipe(uglify())

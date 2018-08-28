@@ -87,7 +87,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = DBHelper.imageUrlForRestaurant(restaurant) + '.jpg';
   image.alt = restaurant.name + ' located at ' + restaurant.address;
   image.setAttribute('tabindex', 0);
 
@@ -350,7 +350,7 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}.jpg`);
+    return (`/img/${restaurant.photograph}`);
   }
 
   /**
