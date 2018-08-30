@@ -5,14 +5,22 @@ let concat = require('gulp-concat')
 let uglify = require('gulp-uglify-es').default
 let cleanCSS = require('gulp-clean-css')
 
-//reduces image quality to lowest quality
-gulp.task('gulp-image-resize', () => {
-  return gulp.src('images/*.jpg')
+//creates a blurry version of jpgs.
+gulp.task('blur-image', () => {
+  return gulp.src('img/*.jpg')
     .pipe(imageResize({
+      width: 50,
       quality: 0
     }))
-    .pipe(rename((path) => { path.basename += '-low-quality' }))
-    .pipe(gulp.dest('dist/images'))
+    .pipe(imageResize( {
+      width: 800,
+      height: 600,
+      quality: 0,
+      upscale: true,
+      crop: true
+    }))
+    .pipe(rename((path) => { path.basename += '-blurry' }))
+    .pipe(gulp.dest('dist/img'))
 })
 
 //moves html files to dist folder
@@ -27,15 +35,46 @@ gulp.task('copy-images', () => {
     .pipe(gulp.dest('dist/img'))
 })
 
-//watches files for changes
-gulp.task('watch', () => {
-  return gulp.watch('/*.html', ['copy-html'])
+//moves sw assets to dist folder
+gulp.task('copy-sw', () => {
+  return gulp.src(['./sw.js', './manifest.json'])
+    .pipe(gulp.dest('./dist'))
 })
 
-//concat and minify js
+//watches files for changes
+gulp.task('watch', () => {
+  gulp.watch('./*.html', gulp.parallel('copy-html'))
+  gulp.watch(['./sw.js', './manifest.json'], gulp.parallel('copy-sw'))
+  gulp.watch('css/**/*.css', gulp.parallel('css'))
+  gulp.watch('js/**/*.js', gulp.series('scripts', 'scripts-restaurant'))
+})
+
+//concat index js
+gulp.task('scripts', () => {
+  return gulp.src(['js/main.js', 'js/dbhelper.js'])
+    .pipe(concat('all1.js'))
+    .pipe(gulp.dest('dist/js'))
+})
+
+//concat restaurant js
+gulp.task('scripts-restaurant', () => {
+  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
+    .pipe(concat('all2.js'))
+    .pipe(gulp.dest('dist/js'))
+})
+
+//concat and minify index js for production build
 gulp.task('scripts-dist', () => {
-  return gulp.src('js/**/*.js')
-    .pipe(concat('all.js'))
+  return gulp.src(['js/main.js', 'js/dbhelper.js'])
+    .pipe(concat('all1.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/js'))
+})
+
+//concat and minify restaurant js
+gulp.task('scripts-restaurant-dist', () => {
+  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
+    .pipe(concat('all2.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist/js'))
 })
@@ -48,4 +87,4 @@ gulp.task('css', () => {
 })
 
 //default tasks
-gulp.task('default', gulp.parallel('copy-html', 'copy-images', ))
+gulp.task('default', gulp.series('copy-html', 'copy-images', 'copy-sw', 'scripts', 'scripts-restaurant', 'css', 'watch' ))

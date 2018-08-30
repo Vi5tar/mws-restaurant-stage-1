@@ -5,13 +5,13 @@ var newMap;
  * Initialize map as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  initMap();
+  initMap2();
 });
 
 /**
  * Initialize leaflet map
  */
-initMap = () => {
+initMap2 = () => {
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
@@ -87,7 +87,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = DBHelper.imageUrlForRestaurant(restaurant) + '.jpg';
   image.alt = restaurant.name + ' located at ' + restaurant.address;
   image.setAttribute('tabindex', 0);
 
@@ -186,14 +186,14 @@ fillBreadcrumb = (restaurant = self.restaurant) => {
  * Get a parameter by name from page URL.
  */
 getParameterByName = (name, url) => {
-  if (!url) 
+  if (!url)
     url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');
   const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
     results = regex.exec(url);
-  if (!results) 
+  if (!results)
     return null;
-  if (!results[2]) 
+  if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
