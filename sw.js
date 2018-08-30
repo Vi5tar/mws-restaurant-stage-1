@@ -16,7 +16,9 @@ const urlsToCache = [
   //'/js/dbhelper.js',
   //'/js/main.js',
   //'/js/restaurant_info.js',
-  '/js/all.js',
+  //'/js/all.js',
+  '/js/all1.js',
+  '/js/all2.js',
   '/sw.js'
 ];
 

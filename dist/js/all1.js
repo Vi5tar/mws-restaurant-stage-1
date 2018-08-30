@@ -41,7 +41,6 @@ lazyLoad = () => {
 
   let observer = new IntersectionObserver(callback, options);
   let targets = document.querySelectorAll('#lazyimg');
-  console.log(targets);
 
   targets.forEach(lazyImage => {
     observer.observe(lazyImage);
