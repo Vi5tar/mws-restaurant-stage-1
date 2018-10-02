@@ -1,6 +1,6 @@
 @charset "utf-8";
-/* CSS Document */
 
+/* CSS Document */
 html {
   height: 100%;
 }
@@ -68,7 +68,6 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 }
 
 /* ====================== Navigation ====================== */
-
 nav {
   width: 100%;
   background-color: #252831;
@@ -101,13 +100,11 @@ nav h1 a {
 }
 
 /* Display list items side by side */
-
 #breadcrumb li {
   display: inline;
 }
 
 /* Add a slash symbol (/) before/behind each list item */
-
 #breadcrumb li+li:before {
   padding: 8px;
   color: black;
@@ -115,7 +112,6 @@ nav h1 a {
 }
 
 /* Add a color to all links inside the list */
-
 #breadcrumb li a {
   color: #024D92;
   /* original color: #0275d8 */
@@ -123,14 +119,12 @@ nav h1 a {
 }
 
 /* Add a color on mouse-over */
-
 #breadcrumb li a:hover {
   color: #01447e;
   text-decoration: underline;
 }
 
 /* ====================== Map ====================== */
-
 #map {
   height: 400px;
   width: 100%;
@@ -138,7 +132,6 @@ nav h1 a {
 }
 
 /* ====================== Restaurant Filtering ====================== */
-
 .filter-options {
   display: flex;
   justify-content: center;
@@ -169,7 +162,6 @@ nav h1 a {
 }
 
 /* ====================== Restaurant Listing ====================== */
-
 #restaurants-list {
   background-color: #f3f3f3;
   list-style: outside none none;
@@ -229,7 +221,6 @@ nav h1 a {
 }
 
 /* ====================== Restaurant Details ====================== */
-
 .inside header {
   position: fixed;
   top: 0;
@@ -337,25 +328,78 @@ nav h1 a {
   color: #666;
 }
 
-/* ====================== Break Points ====================== */
+/* ====================== Form Modal ====================== */
+/*Modal template from w3schools*/
+.modal {
+  /* Hidden by default */
+  display: none;
+  /* Stay in place */
+  position: fixed;
+  /* Sit on top */
+  z-index: 401;
+  /* Location of the box */
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  /* Full width */
+  width: 100%;
+  /* Full height */
+  height: 100%;
+  /* Enable scroll if needed */
+  overflow: auto;
+  /* Fallback color */
+  background-color: rgb(0, 0, 0);
+  /* Black w/ opacity */
+  background-color: rgba(0, 0, 0, 0.4);
+}
 
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ====================== Break Points ====================== */
 @media screen and (max-width: 425px) {
+
   /* ======== index.html ========*/
   .filter-options h2 {
     display: none;
   }
+
   #map {
     height: 300px;
   }
+
   #restaurants-list li {
     padding: 0;
   }
+
   #restaurants-list {
     padding: 0px 15px 70px;
   }
 }
 
 @media screen and (min-width: 1100px) {
+
   /* ======== index.html ========*/
   /*#container {
     width: 1000px;
@@ -368,9 +412,11 @@ nav h1 a {
   html {
     height: 100%;
   }
+
   body {
     min-height: 100%;
   }
+
   #map-container {
     background: blue none repeat scroll 0 0;
     height: 87%;
@@ -379,24 +425,29 @@ nav h1 a {
     top: 85px;
     width: 50%;
   }
+
   #restaurants-list {
     width: 50%;
     padding-top: 85px;
     padding-left: 0px;
   }
+
   header {
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
   }
+
   .filter-options {
     position: fixed;
     top: 30px;
   }
+
   #map {
     height: 100%;
   }
+
   #footer {
     position: absolute;
     bottom: 0;
@@ -405,6 +456,7 @@ nav h1 a {
 }
 
 @media screen and (max-width: 396px) {
+
   /* ======== restaurant.html ========*/
   .inside #map-container {
     top: 110px;
@@ -412,49 +464,60 @@ nav h1 a {
 }
 
 @media screen and (max-width: 1100px) {
+
   /* ======== restaurant.html ========*/
   .inside #map-container {
     height: 300px;
     width: 100%;
     position: relative;
   }
+
   #breadcrumb {
     width: 100%;
   }
+
   #restaurant-container {
     width: auto;
   }
+
   #reviews-container {
     width: auto;
   }
+
   .inside #footer {
     width: auto;
   }
+
   #restaurant-img {
     margin-left: calc(10%/2);
   }
+
   #restaurant-cuisine {
     margin-left: calc(10%/2);
   }
 }
 
 @media screen and (min-width: 473px) {
+
   /* ======== restaurant.html ========*/
   .inside #footer {
     width: 100%;
     padding-left: 0;
     padding-right: 0;
   }
+
   #breadcrumb {
     width: 100%;
   }
 }
 
 @media screen and (min-width: 426px) {
+
   /* ======== restaurant.html ========*/
   #restaurant-address {
     text-align: center;
   }
+
   #restaurant-hours {
     margin: auto;
   }

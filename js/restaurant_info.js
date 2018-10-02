@@ -82,6 +82,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
+  const favToggle = document.getElementById('favToggle');
+  favToggle.innerHTML = `Favorite: ${restaurant.is_favorite}`
+
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
@@ -131,6 +134,12 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
   container.appendChild(title);
+
+  const addReview = document.createElement('button');
+  addReview.id='review-button';
+  addReview.innerHTML = 'Submit Review';
+  addReview.addEventListener('click', openModal);
+  container.appendChild(addReview);
 
   if (!reviews) {
     const noReviews = document.createElement('p');
@@ -196,4 +205,24 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+//Opens the modal
+openModal = () => {
+  let modal = document.getElementById('my-modal');
+  modal.style.display = 'block';
+}
+
+//Closes the modal when the 'x' is clicked
+closeModal = () => {
+  let modal = document.getElementById('my-modal');
+  modal.style.display = 'none';
+}
+
+//closes the modal when user clicks outside of the modal
+window.onclick = (event) => {
+  let modal = document.getElementById('my-modal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
