@@ -135,6 +135,12 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
+  const addReview = document.createElement('button');
+  addReview.id='review-button';
+  addReview.innerHTML = 'Submit Review';
+  addReview.addEventListener('click', openModal);
+  container.appendChild(addReview);
+
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
@@ -199,4 +205,24 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+//Opens the modal
+openModal = () => {
+  let modal = document.getElementById('my-modal');
+  modal.style.display = 'block';
+}
+
+//Closes the modal when the 'x' is clicked
+closeModal = () => {
+  let modal = document.getElementById('my-modal');
+  modal.style.display = 'none';
+}
+
+//closes the modal when user clicks outside of the modal
+window.onclick = (event) => {
+  let modal = document.getElementById('my-modal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
