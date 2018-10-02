@@ -195,6 +195,7 @@ createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   const image = document.createElement('img');
   const dataSrc = document.createAttribute('data-src')
+
   image.className = 'restaurant-img';
   image.id = 'lazyimg';
   image.src = DBHelper.imageUrlForRestaurant(restaurant) + '-blurry.jpg';
@@ -207,6 +208,13 @@ createRestaurantHTML = (restaurant) => {
   const name = document.createElement('h2');
   name.innerHTML = restaurant.name;
   li.append(name);
+
+  const favToggle = document.createElement('button');
+  favToggle.innerHTML = `Favorite: ${restaurant.is_favorite}`;
+  li.append(favToggle);
+
+  li.append(document.createElement('br'));
+  li.append(document.createElement('br'));
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
