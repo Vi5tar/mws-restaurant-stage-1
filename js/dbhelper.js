@@ -50,6 +50,18 @@ class DBHelper {
     });
   }
 
+  static fetchreviewById(id, callback) {
+    let review = fetch('http://localhost:1337/reviews/?restaurant_id=' + id)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(myJson) {
+        //console.log(myJson);
+        return callback(null, myJson);
+      });
+
+  }
+
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */
