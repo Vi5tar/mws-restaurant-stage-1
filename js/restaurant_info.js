@@ -1,5 +1,6 @@
 let restaurant;
 var newMap;
+let review;
 
 /**
  * Initialize map as soon as the page is loaded.
@@ -69,6 +70,14 @@ fetchRestaurantFromURL = (callback) => {
         console.error(error);
         return;
       }
+      DBHelper.fetchreviewById(id, (error, review) => {
+        self.review = review;
+        if (!review) {
+          console.error(error);
+          return;
+        }
+        fillReviewsHTML();
+      });
       fillRestaurantHTML();
       callback(null, restaurant)
     });
@@ -102,7 +111,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  //fillReviewsHTML();
 }
 
 /**
@@ -129,7 +138,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (reviews = self.review) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -166,9 +175,9 @@ createReviewHTML = (review) => {
   name.innerHTML = review.name;
   li.appendChild(name);
 
-  const date = document.createElement('p');
-  date.innerHTML = review.date;
-  li.appendChild(date);
+  //const date = document.createElement('p');
+  //date.innerHTML = review.date;
+  //li.appendChild(date);
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
