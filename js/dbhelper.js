@@ -191,4 +191,16 @@ class DBHelper {
     return marker;
   }*/
 
+  //toggle Favorite status and update the server
+  static toggleFavorite(status, id) {
+    if (status == true | status == "true" | status == undefined) {
+      status = false;
+      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=false', {method: 'PUT'});
+    } else if (status == false | status == "false") {
+      status = true;
+      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=true', {method: 'PUT'});
+    }
+    return status;
+  }
+
 }

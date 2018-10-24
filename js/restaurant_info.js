@@ -92,6 +92,11 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
 
   const favToggle = document.getElementById('favToggle');
+  favToggle.addEventListener('click', function() {
+    const favStatus = DBHelper.toggleFavorite(restaurant.is_favorite, restaurant.id);
+    favToggle.innerHTML = `Favorite: ${favStatus}`;
+    restaurant.is_favorite = favStatus;
+  })
   favToggle.innerHTML = `Favorite: ${restaurant.is_favorite}`
 
   const address = document.getElementById('restaurant-address');

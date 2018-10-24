@@ -210,6 +210,11 @@ createRestaurantHTML = (restaurant) => {
   li.append(name);
 
   const favToggle = document.createElement('button');
+  favToggle.addEventListener('click', function() {
+    const favStatus = DBHelper.toggleFavorite(restaurant.is_favorite, restaurant.id);
+    favToggle.innerHTML = `Favorite: ${favStatus}`;
+    restaurant.is_favorite = favStatus;
+  })
   favToggle.innerHTML = `Favorite: ${restaurant.is_favorite}`;
   li.append(favToggle);
 
