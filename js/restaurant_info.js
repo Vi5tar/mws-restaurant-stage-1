@@ -224,6 +224,8 @@ getParameterByName = (name, url) => {
 //Opens the modal
 openModal = () => {
   let modal = document.getElementById('my-modal');
+  let hiddenInput = document.getElementById('resIdForForm');
+  hiddenInput.setAttribute('value', self.restaurant.id);
   modal.style.display = 'block';
 }
 

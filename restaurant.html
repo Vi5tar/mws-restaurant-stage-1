@@ -71,7 +71,8 @@
     <!-- Modal content -->
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <form>
+      <form onsubmit="setTimeout(function(){window.location.reload();},10)" action="http://localhost:1337/reviews/" method="POST">
+        <input id="resIdForForm" type="hidden" name="restaurant_id">
         Name:<br>
         <input type="text" name="name"><br><br>
         Rating:
@@ -83,7 +84,7 @@
           <option value="5">5</option>
         </select><br><br>
         Comments:<br>
-        <textarea style="width:100%; height:100px"></textarea>
+        <textarea style="width:100%; height:100px" name="comments"></textarea>
         <input type="submit" value="Submit">
       </form>
     </div>
