@@ -467,4 +467,26 @@ class DBHelper {
     return status;
   }
 
+  //handles submitting a review and refreshing the page after server has been
+  //updated.
+  static submitReview() {
+    document.getElementById("my-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      //console.log(document.getElementById("form-name").value);
+      let id = document.getElementById("resIdForForm").value;
+      let name = document.getElementById("form-name").value;
+      let rating = document.getElementById("form-rating").value;
+      let comments = document.getElementById("form-comments").value;
+
+      fetch('http://localhost:1337/reviews/', {
+        method: 'POST',
+        body: JSON.stringify({"restaurant_id": id, "name": name, "rating": rating, "comments": comments})
+      }).then(update => {
+        fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(reload => {
+          window.location.reload()
+        })
+      })
+    })
+  }
+
 }
