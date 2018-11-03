@@ -440,10 +440,10 @@ class DBHelper {
   static toggleFavorite(status, id) {
     if (status == true | status == "true" | status == undefined) {
       status = false;
-      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=false', {method: 'PUT'});
+      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=false', {method: 'PUT'}).then(update => {fetch('http://localhost:1337/restaurants');});
     } else if (status == false | status == "false") {
       status = true;
-      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=true', {method: 'PUT'});
+      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=true', {method: 'PUT'}).then(update => {fetch('http://localhost:1337/restaurants');});
     }
     return status;
   }
