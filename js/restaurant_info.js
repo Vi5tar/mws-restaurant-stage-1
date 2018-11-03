@@ -7,6 +7,7 @@ let review;
  */
 document.addEventListener('DOMContentLoaded', (event) => {
   initMap2();
+  DBHelper.submitReview();
 });
 
 /**
