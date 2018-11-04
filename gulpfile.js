@@ -51,21 +51,21 @@ gulp.task('watch', () => {
 
 //concat index js
 gulp.task('scripts', () => {
-  return gulp.src(['js/main.js', 'js/dbhelper.js'])
+  return gulp.src(['js/main.js', 'js/dbhelper.js', 'js/idb-keyval/dist/idb-keyval-iife.js'])
     .pipe(concat('all1.js'))
     .pipe(gulp.dest('dist/js'))
 })
 
 //concat restaurant js
 gulp.task('scripts-restaurant', () => {
-  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
+  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js', 'js/idb-keyval/dist/idb-keyval-iife.js'])
     .pipe(concat('all2.js'))
     .pipe(gulp.dest('dist/js'))
 })
 
 //concat and minify index js for production build
 gulp.task('scripts-dist', () => {
-  return gulp.src(['js/main.js', 'js/dbhelper.js'])
+  return gulp.src(['js/main.js', 'js/dbhelper.js', 'js/idb-keyval/dist/idb-keyval-iife.js'])
     .pipe(concat('all1.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist/js'))
@@ -73,7 +73,7 @@ gulp.task('scripts-dist', () => {
 
 //concat and minify restaurant js
 gulp.task('scripts-restaurant-dist', () => {
-  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js'])
+  return gulp.src(['js/restaurant_info.js', 'js/dbhelper.js', 'js/idb-keyval/dist/idb-keyval-iife.js'])
     .pipe(concat('all2.js'))
     .pipe(uglify())
     .pipe(gulp.dest('dist/js'))

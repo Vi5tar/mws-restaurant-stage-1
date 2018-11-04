@@ -217,10 +217,21 @@ class DBHelper {
       fetch('http://localhost:1337/reviews/', {
         method: 'POST',
         body: JSON.stringify({"restaurant_id": id, "name": name, "rating": rating, "comments": comments})
-      }).then(update => {
-        fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(reload => {
+      })
+      .then(update => {
+        fetch('http://localhost:1337/reviews/?restaurant_id=' + id)
+        .then(reload => {
           window.location.reload()
         })
+      })
+      .catch(fetchFail => {
+        console.log(fetchFail);
+        idbKeyval.set(Date.now(), {
+          method: 'POST',
+          body: JSON.stringify({"restaurant_id": id, "name": name, "rating": rating, "comments": comments})
+        })
+          .then(() => console.log('It worked!')).then(() => window.location.reload())
+          .catch(err => console.log('It failed!', err));
       })
     })
   }
