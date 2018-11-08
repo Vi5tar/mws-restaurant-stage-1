@@ -453,12 +453,65 @@ class DBHelper {
 
   //toggle Favorite status and update the server
   static toggleFavorite(status, id) {
+    const updateFavUrl = 'http://localhost:1337/restaurants/' + id + '/?is_favorite=';
     if (status == true | status == "true" | status == undefined) {
       status = false;
-      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=false', {method: 'PUT'}).then(update => {fetch('http://localhost:1337/restaurants');});
+      fetch(updateFavUrl + status, {method: 'PUT'})
+      .then(update => {fetch('http://localhost:1337/restaurants');})
+      .catch(fetchFail => {
+        idbKeyval.set('restaurant_id=' + id, {
+          method: 'PUT',
+          url: updateFavUrl + status
+        })
+        .then(() => {
+          caches.open('restaurantReviewCache')
+            .then(cache => {
+              return cache.match('http://localhost:1337/restaurants')
+            })
+            .then(response => {
+              return response.json();
+            })
+            .then(data => {
+              //console.log(data);
+              for(let num of data) {
+                if(num.id == id) {
+                  num.is_favorite = status;
+                }
+              }
+              let responseToCache = new Response(JSON.stringify(data));
+              caches.open('restaurantReviewCache').then(cache => {cache.put('http://localhost:1337/restaurants', responseToCache)});
+            });
+        })
+      });
     } else if (status == false | status == "false") {
       status = true;
-      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=true', {method: 'PUT'}).then(update => {fetch('http://localhost:1337/restaurants');});
+      fetch(updateFavUrl + status, {method: 'PUT'})
+      .then(update => {fetch('http://localhost:1337/restaurants');})
+      .catch(fetchFail => {
+        idbKeyval.set('restaurant_id=' + id, {
+          method: 'PUT',
+          url: updateFavUrl + status
+        })
+        .then(() => {
+          caches.open('restaurantReviewCache')
+            .then(cache => {
+              return cache.match('http://localhost:1337/restaurants')
+            })
+            .then(response => {
+              return response.json();
+            })
+            .then(data => {
+              //console.log(data);
+              for(let num of data) {
+                if(num.id == id) {
+                  num.is_favorite = status;
+                }
+              }
+              let responseToCache = new Response(JSON.stringify(data));
+              caches.open('restaurantReviewCache').then(cache => {cache.put('http://localhost:1337/restaurants', responseToCache)});
+            });
+        })
+      });
     }
     return status;
   }
@@ -524,13 +577,21 @@ class DBHelper {
     }).then(cached => {
         idbKeyval.get(cached)
         .then(result => {
-          fetch('http://localhost:1337/reviews/', result).then(() => idbKeyval.del(cached)).then(() => DBHelper.IdbToServer());
+          if (result.method == 'POST') {
+            fetch('http://localhost:1337/reviews/', result).then(() => idbKeyval.del(cached)).then(() => DBHelper.IdbToServer());
+          } else {
+            console.log(result);
+            fetch(result.url, {method: result.method}).then(() => idbKeyval.del(cached)).then(() => DBHelper.IdbToServer());
+          }
+
         })
         .catch(err => {
           console.log('no pairs');
           if (id) {
-            fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(() => console.log('updated cache'));
+            fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(() => console.log('updated cache'))
+            .then(() => fetch('http://localhost:1337/restaurants'));
           }
+          fetch('http://localhost:1337/restaurants');
         })
     })
   }
