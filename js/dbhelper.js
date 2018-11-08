@@ -208,32 +208,94 @@ class DBHelper {
   static submitReview() {
     document.getElementById("my-form").addEventListener("submit", function(event) {
       event.preventDefault();
-      //console.log(document.getElementById("form-name").value);
-      let id = document.getElementById("resIdForForm").value;
-      let name = document.getElementById("form-name").value;
-      let rating = document.getElementById("form-rating").value;
-      let comments = document.getElementById("form-comments").value;
 
-      fetch('http://localhost:1337/reviews/', {
+      //get review values from form
+      const id = document.getElementById("resIdForForm").value;
+      const name = document.getElementById("form-name").value;
+      const rating = document.getElementById("form-rating").value;
+      const comments = document.getElementById("form-comments").value;
+      const reviewsByIdUrl = 'http://localhost:1337/reviews/?restaurant_id=' + id;
+      const submitReviewUrl = 'http://localhost:1337/reviews/';
+      const review = {"restaurant_id": id, "name": name, "rating": rating, "comments": comments};
+
+      //submit review to server and reload page
+      fetch(submitReviewUrl, {
         method: 'POST',
-        body: JSON.stringify({"restaurant_id": id, "name": name, "rating": rating, "comments": comments})
+        body: JSON.stringify(review)
       })
       .then(update => {
-        fetch('http://localhost:1337/reviews/?restaurant_id=' + id)
+        fetch(reviewsByIdUrl)
         .then(reload => {
           window.location.reload()
         })
       })
+      //if unable to submit review to server store it in idb for later
+      //submission, upadte cache, and reload page.
       .catch(fetchFail => {
-        console.log(fetchFail);
         idbKeyval.set(Date.now(), {
           method: 'POST',
-          body: JSON.stringify({"restaurant_id": id, "name": name, "rating": rating, "comments": comments})
+          body: JSON.stringify(review)
         })
-          .then(() => console.log('It worked!')).then(() => window.location.reload())
-          .catch(err => console.log('It failed!', err));
+          .then(() => {
+            caches.open('restaurantReviewCache')
+              .then(cache => {
+                return cache.match(reviewsByIdUrl)
+              })
+              .then(response => {
+                return response.json();
+              })
+              .then(data => {
+                data.push(review);
+                let responseToCache = new Response(JSON.stringify(data));
+                caches.open('restaurantReviewCache').then(cache => {cache.put(reviewsByIdUrl, responseToCache)});
+              });
+          })
+          .catch(err => console.log('It failed!', err))
+          .then(() => window.location.reload())
       })
     })
+  }
+
+
+  //takes reviews stored in indexDB and writes them to server
+  static IdbToServer(id) {
+    idbKeyval.keys().then(keys => {
+      return keys[0];
+    }).then(cached => {
+        idbKeyval.get(cached)
+        .then(result => {
+          fetch('http://localhost:1337/reviews/', result).then(() => idbKeyval.del(cached)).then(() => DBHelper.IdbToServer());
+        })
+        .catch(err => {
+          console.log('no pairs');
+          if (id) {
+            fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(() => console.log('updated cache'));
+          }
+        })
+    })
+  }
+
+  //takes a review and adds it to the cache
+  static async testCacheRetrieve(id) {
+    const testReview = {"restaurant_id": "2", "name": "McToad", "rating": "2", "comments": "this place sucks"}
+    const key = 'http://localhost:1337/reviews/?restaurant_id=' + id;
+    //const cache = await caches.open('restaurantReviewCache');
+    //const cachedResponse = await cache.match(key);
+    caches.open('restaurantReviewCache')
+      .then(cache => {
+        return cache.match(key)
+      })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        data.push(testReview);
+        let testResponse = new Response(JSON.stringify(data));
+        caches.open('restaurantReviewCache').then(cache => {cache.put(key, testResponse)});
+      });
+    //fetch(key).then(result => {console.log(result)});
+    //console.log(cachedResponse.body);
+    //console.log('wacka wacka');
   }
 
 }

@@ -8,6 +8,7 @@ let review;
 document.addEventListener('DOMContentLoaded', (event) => {
   initMap2();
   DBHelper.submitReview();
+  DBHelper.IdbToServer(getParameterByName('id'));
 });
 
 /**
@@ -145,6 +146,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.review) => {
+  //console.log(reviews);
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -155,6 +157,18 @@ fillReviewsHTML = (reviews = self.review) => {
   addReview.innerHTML = 'Submit Review';
   addReview.addEventListener('click', openModal);
   container.appendChild(addReview);
+
+  /*const testButton = document.createElement('button');
+  testButton.id='test-button';
+  testButton.innerHTML = 'Test';
+  testButton.addEventListener('click', DBHelper.testIdbToServer);
+  container.appendChild(testButton);*/
+
+  /*const testCacheButton = document.createElement('button');
+  testCacheButton.id='test-cache-button';
+  testCacheButton.innerHTML = 'Test Cache';
+  testCacheButton.addEventListener('click', DBHelper.testCacheRetrieve);
+  container.appendChild(testCacheButton);*/
 
   if (!reviews) {
     const noReviews = document.createElement('p');
