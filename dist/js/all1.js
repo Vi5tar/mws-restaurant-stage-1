@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap(); // added
   fetchNeighborhoods();
   fetchCuisines();
+  DBHelper.IdbToServer();
 });
 
 if (navigator.serviceWorker) {
@@ -457,12 +458,65 @@ class DBHelper {
 
   //toggle Favorite status and update the server
   static toggleFavorite(status, id) {
+    const updateFavUrl = 'http://localhost:1337/restaurants/' + id + '/?is_favorite=';
     if (status == true | status == "true" | status == undefined) {
       status = false;
-      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=false', {method: 'PUT'}).then(update => {fetch('http://localhost:1337/restaurants');});
+      fetch(updateFavUrl + status, {method: 'PUT'})
+      .then(update => {fetch('http://localhost:1337/restaurants');})
+      .catch(fetchFail => {
+        idbKeyval.set('restaurant_id=' + id, {
+          method: 'PUT',
+          url: updateFavUrl + status
+        })
+        .then(() => {
+          caches.open('restaurantReviewCache')
+            .then(cache => {
+              return cache.match('http://localhost:1337/restaurants')
+            })
+            .then(response => {
+              return response.json();
+            })
+            .then(data => {
+              //console.log(data);
+              for(let num of data) {
+                if(num.id == id) {
+                  num.is_favorite = status;
+                }
+              }
+              let responseToCache = new Response(JSON.stringify(data));
+              caches.open('restaurantReviewCache').then(cache => {cache.put('http://localhost:1337/restaurants', responseToCache)});
+            });
+        })
+      });
     } else if (status == false | status == "false") {
       status = true;
-      fetch('http://localhost:1337/restaurants/' + id + '/?is_favorite=true', {method: 'PUT'}).then(update => {fetch('http://localhost:1337/restaurants');});
+      fetch(updateFavUrl + status, {method: 'PUT'})
+      .then(update => {fetch('http://localhost:1337/restaurants');})
+      .catch(fetchFail => {
+        idbKeyval.set('restaurant_id=' + id, {
+          method: 'PUT',
+          url: updateFavUrl + status
+        })
+        .then(() => {
+          caches.open('restaurantReviewCache')
+            .then(cache => {
+              return cache.match('http://localhost:1337/restaurants')
+            })
+            .then(response => {
+              return response.json();
+            })
+            .then(data => {
+              //console.log(data);
+              for(let num of data) {
+                if(num.id == id) {
+                  num.is_favorite = status;
+                }
+              }
+              let responseToCache = new Response(JSON.stringify(data));
+              caches.open('restaurantReviewCache').then(cache => {cache.put('http://localhost:1337/restaurants', responseToCache)});
+            });
+        })
+      });
     }
     return status;
   }
@@ -472,21 +526,179 @@ class DBHelper {
   static submitReview() {
     document.getElementById("my-form").addEventListener("submit", function(event) {
       event.preventDefault();
-      //console.log(document.getElementById("form-name").value);
-      let id = document.getElementById("resIdForForm").value;
-      let name = document.getElementById("form-name").value;
-      let rating = document.getElementById("form-rating").value;
-      let comments = document.getElementById("form-comments").value;
 
-      fetch('http://localhost:1337/reviews/', {
+      //get review values from form
+      const id = document.getElementById("resIdForForm").value;
+      const name = document.getElementById("form-name").value;
+      const rating = document.getElementById("form-rating").value;
+      const comments = document.getElementById("form-comments").value;
+      const reviewsByIdUrl = 'http://localhost:1337/reviews/?restaurant_id=' + id;
+      const submitReviewUrl = 'http://localhost:1337/reviews/';
+      const review = {"restaurant_id": id, "name": name, "rating": rating, "comments": comments};
+
+      //submit review to server and reload page
+      fetch(submitReviewUrl, {
         method: 'POST',
-        body: JSON.stringify({"restaurant_id": id, "name": name, "rating": rating, "comments": comments})
-      }).then(update => {
-        fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(reload => {
+        body: JSON.stringify(review)
+      })
+      .then(update => {
+        fetch(reviewsByIdUrl)
+        .then(reload => {
           window.location.reload()
         })
+      })
+      //if unable to submit review to server store it in idb for later
+      //submission, upadte cache, and reload page.
+      .catch(fetchFail => {
+        idbKeyval.set(Date.now(), {
+          method: 'POST',
+          body: JSON.stringify(review)
+        })
+          .then(() => {
+            caches.open('restaurantReviewCache')
+              .then(cache => {
+                return cache.match(reviewsByIdUrl)
+              })
+              .then(response => {
+                return response.json();
+              })
+              .then(data => {
+                data.push(review);
+                let responseToCache = new Response(JSON.stringify(data));
+                caches.open('restaurantReviewCache').then(cache => {cache.put(reviewsByIdUrl, responseToCache)});
+              });
+          })
+          .catch(err => console.log('It failed!', err))
+          .then(() => window.location.reload())
       })
     })
   }
 
+
+  //takes reviews stored in indexDB and writes them to server
+  static IdbToServer(id) {
+    idbKeyval.keys().then(keys => {
+      return keys[0];
+    }).then(cached => {
+        idbKeyval.get(cached)
+        .then(result => {
+          if (result.method == 'POST') {
+            fetch('http://localhost:1337/reviews/', result).then(() => idbKeyval.del(cached)).then(() => DBHelper.IdbToServer());
+          } else {
+            console.log(result);
+            fetch(result.url, {method: result.method}).then(() => idbKeyval.del(cached)).then(() => DBHelper.IdbToServer());
+          }
+
+        })
+        .catch(err => {
+          console.log('no pairs');
+          if (id) {
+            fetch('http://localhost:1337/reviews/?restaurant_id=' + id).then(() => console.log('updated cache'))
+            .then(() => fetch('http://localhost:1337/restaurants'));
+          }
+          fetch('http://localhost:1337/restaurants');
+        })
+    })
+  }
+
+  //takes a review and adds it to the cache
+  static async testCacheRetrieve(id) {
+    const testReview = {"restaurant_id": "2", "name": "McToad", "rating": "2", "comments": "this place sucks"}
+    const key = 'http://localhost:1337/reviews/?restaurant_id=' + id;
+    //const cache = await caches.open('restaurantReviewCache');
+    //const cachedResponse = await cache.match(key);
+    caches.open('restaurantReviewCache')
+      .then(cache => {
+        return cache.match(key)
+      })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        data.push(testReview);
+        let testResponse = new Response(JSON.stringify(data));
+        caches.open('restaurantReviewCache').then(cache => {cache.put(key, testResponse)});
+      });
+    //fetch(key).then(result => {console.log(result)});
+    //console.log(cachedResponse.body);
+    //console.log('wacka wacka');
+  }
+
 }
+
+var idbKeyval = (function (exports) {
+'use strict';
+
+class Store {
+    constructor(dbName = 'keyval-store', storeName = 'keyval') {
+        this.storeName = storeName;
+        this._dbp = new Promise((resolve, reject) => {
+            const openreq = indexedDB.open(dbName, 1);
+            openreq.onerror = () => reject(openreq.error);
+            openreq.onsuccess = () => resolve(openreq.result);
+            // First time setup: create an empty object store
+            openreq.onupgradeneeded = () => {
+                openreq.result.createObjectStore(storeName);
+            };
+        });
+    }
+    _withIDBStore(type, callback) {
+        return this._dbp.then(db => new Promise((resolve, reject) => {
+            const transaction = db.transaction(this.storeName, type);
+            transaction.oncomplete = () => resolve();
+            transaction.onabort = transaction.onerror = () => reject(transaction.error);
+            callback(transaction.objectStore(this.storeName));
+        }));
+    }
+}
+let store;
+function getDefaultStore() {
+    if (!store)
+        store = new Store();
+    return store;
+}
+function get(key, store = getDefaultStore()) {
+    let req;
+    return store._withIDBStore('readonly', store => {
+        req = store.get(key);
+    }).then(() => req.result);
+}
+function set(key, value, store = getDefaultStore()) {
+    return store._withIDBStore('readwrite', store => {
+        store.put(value, key);
+    });
+}
+function del(key, store = getDefaultStore()) {
+    return store._withIDBStore('readwrite', store => {
+        store.delete(key);
+    });
+}
+function clear(store = getDefaultStore()) {
+    return store._withIDBStore('readwrite', store => {
+        store.clear();
+    });
+}
+function keys(store = getDefaultStore()) {
+    const keys = [];
+    return store._withIDBStore('readonly', store => {
+        // This would be store.getAllKeys(), but it isn't supported by Edge or Safari.
+        // And openKeyCursor isn't supported by Safari.
+        (store.openKeyCursor || store.openCursor).call(store).onsuccess = function () {
+            if (!this.result)
+                return;
+            keys.push(this.result.key);
+            this.result.continue();
+        };
+    }).then(() => keys);
+}
+
+exports.Store = Store;
+exports.get = get;
+exports.set = set;
+exports.del = del;
+exports.clear = clear;
+exports.keys = keys;
+
+return exports;
+
+}({}));

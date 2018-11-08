@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap(); // added
   fetchNeighborhoods();
   fetchCuisines();
+  DBHelper.IdbToServer();
 });
 
 if (navigator.serviceWorker) {
